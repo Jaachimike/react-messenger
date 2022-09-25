@@ -1,5 +1,9 @@
 import React, {useState} from 'react'
 import { Form } from 'react-router-dom'
+import {createUserWithEmailAndPassword} from 'firebase/auth'
+import {auth, db} from '../firebase';
+import {setDoc, doc, Timestamp} from 'firebase/firestore'
+
 
 const Register = () => {
   const [data, setData] = useState({
@@ -18,9 +22,27 @@ const Register = () => {
   }
   const handlSubmit = async (e) => {
     e.preventDefault();
+    setData({...data, error:null, loading: true});
     console.log(data);
     if(!name ||!email || !password) {
       setData({...data, error: 'All fields are required'})
+    }
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      await setDoc(doc(db, 'users', result.user.uid), {
+        uid: result.user.uid,
+        name,
+        email,
+        createdAt: Timestamp.fromDate(new Date()),
+        isOnline: true,
+      });
+      setData({name:'', email:'', password:'', error: null, loading:false})     
+    } catch (err) {
+        setData({...data, error: err.message, loading: false})
     }
   }
 
