@@ -19,19 +19,19 @@ const Login = () => {
 
   const handleChange = (e) => {
     setData({...data, [e.target.name]: e.target.value})
-  }
-  const handlSubmit = async (e) => {
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setData({...data, error:null, loading: true});
     console.log(data);
     if(!email || !password) {
-      setData({...data, error: 'All fields are required'})
+      setData({...data, error: 'All fields are required'});
     }
     try {
       const result = await signInWithEmailAndPassword(
         auth,
         email,
-        password,
+        password
       );
       
       await updateDoc(doc(db, 'users', result.user.uid), {
@@ -47,7 +47,7 @@ const Login = () => {
   return (
     <section>
       <h3>Log into your account</h3>
-      <form className='form' onSubmit={handlSubmit}>
+      <form className='form' onSubmit={handleSubmit}>
 
         <div className='input_container'>
           <label htmlFor='email'>Email</label>
